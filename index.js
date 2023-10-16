@@ -60,7 +60,13 @@ app.post('/users', (req, res) => {
 });
 
 app.put('/users', (req, res) => {
-    res.json({status: 'success', data: usersList});
+    const exList = [...usersList];
+    const {id, name, email} = req?.body;
+    const itemIndex = exList?.findIndex((item) => item?.id == id);
+    if (itemIndex > -1) {
+        exList[itemIndex] = {...exList[itemIndex], name, email};
+    }
+    res.json({status: 'success', data: exList});
 });
 
 app.delete('/users/:id', (req, res) => {
