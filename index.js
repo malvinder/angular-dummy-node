@@ -2,7 +2,20 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const multer = require('multer');
+const path = require('path');
 const port = process.env.PORT || 3500;
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname?.replaceAll(' ', '-'));
+    },
+});
+
+const upload = multer({storage});
 
 const usersList = [
     {
@@ -37,6 +50,8 @@ const usersList = [
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+
+app.use(express.static(path.join(__dirname, '../', 'public')));
 
 app.use(
     cors({
@@ -78,6 +93,16 @@ app.delete('/users/:id', (req, res) => {
     }
 
     res.json({status: 'success', data: updatedList});
+});
+
+app.post('/upload', upload.single('attachment'), (req, res) => {
+    const filePath = 'http://localhost:3500/uploads/' + req?.file?.filename;
+
+    res.json({
+        path: filePath,
+        type: req?.file?.mimetype,
+        file: req?.file,
+    });
 });
 
 app.listen(port, () => {
