@@ -51,7 +51,7 @@ const usersList = [
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-app.use(express.static(path.join(__dirname, '../', 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(
     cors({
@@ -76,10 +76,10 @@ app.post('/users', (req, res) => {
 
 app.put('/users', (req, res) => {
     const exList = [...usersList];
-    const {id, name, email} = req?.body;
+    const {id, name, email, profilePic} = req?.body;
     const itemIndex = exList?.findIndex((item) => item?.id == id);
     if (itemIndex > -1) {
-        exList[itemIndex] = {...exList[itemIndex], name, email};
+        exList[itemIndex] = {...exList[itemIndex], name, emai, profilePic};
     }
     res.json({status: 'success', data: exList});
 });
